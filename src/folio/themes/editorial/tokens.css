@@ -1,0 +1,38 @@
+/*
+ * editorial — design tokens.
+ * Magazine front page: high-contrast serif display, grotesque body, thick
+ * black rules, editorial-red accent, wide asymmetric measure.
+ */
+
+[data-theme="editorial"] {
+  --f-bg: #fffdf8;
+  --f-fg: #141414;
+  --f-muted: #6b6862;
+  --f-accent: #c1121f;
+  --f-accent-2: #1d3557;
+  --f-accent-3: #e09f3e;
+  --f-border: #141414;
+  --f-card: transparent;
+
+  --f-radius: 0rem;
+  --f-shadow: none;
+  --f-tracking: -0.015em;
+
+  --f-space-section: clamp(5rem, 10vw, 8rem);
+  --f-maxw: 74rem;
+
+  --f-font-heading: var(--font-editorial-heading), Georgia, serif;
+  --f-font-body: var(--font-editorial-body), system-ui, sans-serif;
+}
+
+[data-theme="editorial"].dark,
+.dark [data-theme="editorial"] {
+  --f-bg: #131311;
+  --f-fg: #f2efe8;
+  --f-muted: #92908a;
+  --f-accent: #ff4d59;
+  --f-accent-2: #7ea8ff;
+  --f-accent-3: #ffd166;
+  --f-border: #f2efe8;
+  --f-card: transparent;
+}

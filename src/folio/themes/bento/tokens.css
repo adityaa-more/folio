@@ -1,0 +1,39 @@
+/*
+ * bento — design tokens.
+ * Everything is a tile: big radii, soft shadows, glassy cards, springy
+ * hover. Geometric sans display, floating dock nav.
+ */
+
+[data-theme="bento"] {
+  --f-bg: #f2f2f5;
+  --f-fg: #16161c;
+  --f-muted: #6e6e7a;
+  --f-accent: #5b5bd6;
+  --f-accent-2: #d65bb4;
+  --f-accent-3: #22a891;
+  --f-border: #e2e2e8;
+  --f-card: #ffffff;
+
+  --f-radius: 1.25rem;
+  --f-shadow: 0 1px 2px rgb(22 22 28 / 0.04), 0 8px 24px rgb(22 22 28 / 0.06);
+  --f-tracking: -0.01em;
+
+  --f-space-section: clamp(5rem, 9vw, 7.5rem);
+  --f-maxw: 70rem;
+
+  --f-font-heading: var(--font-bento-heading), system-ui, sans-serif;
+  --f-font-body: var(--font-bento-body), system-ui, sans-serif;
+}
+
+[data-theme="bento"].dark,
+.dark [data-theme="bento"] {
+  --f-bg: #0d0d12;
+  --f-fg: #ececf1;
+  --f-muted: #8b8b98;
+  --f-accent: #7c7cf0;
+  --f-accent-2: #f07cd0;
+  --f-accent-3: #45d6c0;
+  --f-border: #26262e;
+  --f-card: #16161d;
+  --f-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}

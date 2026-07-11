@@ -1,0 +1,38 @@
+/*
+ * terminal — design tokens.
+ * Mono everywhere, 1px borders, phosphor-green accent, dense rhythm,
+ * instant snappy motion. Light mode = paper terminal, dark = CRT.
+ */
+
+[data-theme="terminal"] {
+  --f-bg: #f4f7f4;
+  --f-fg: #16211a;
+  --f-muted: #5b6f61;
+  --f-accent: #14803c;
+  --f-accent-2: #0e7490;
+  --f-accent-3: #b45309;
+  --f-border: #c4d2c7;
+  --f-card: #ffffff;
+
+  --f-radius: 0rem;
+  --f-shadow: none;
+  --f-tracking: 0em;
+
+  --f-space-section: clamp(4rem, 8vw, 6rem);
+  --f-maxw: 68rem;
+
+  --f-font-heading: var(--font-terminal-mono), ui-monospace, "Cascadia Mono", monospace;
+  --f-font-body: var(--font-terminal-mono), ui-monospace, "Cascadia Mono", monospace;
+}
+
+[data-theme="terminal"].dark,
+.dark [data-theme="terminal"] {
+  --f-bg: #0a0f0b;
+  --f-fg: #c7e6cd;
+  --f-muted: #63806b;
+  --f-accent: #34e070;
+  --f-accent-2: #22d3ee;
+  --f-accent-3: #fbbf24;
+  --f-border: #1d2b21;
+  --f-card: #0e150f;
+}

@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+/*
+ * Theme token sheets. Each is scoped to [data-theme="…"], so coexisting
+ * sheets stay inert — only the active theme's block applies. Sheets are tiny
+ * (~1KB); new themes add one @import here.
+ */
+@import "../folio/themes/luxury-minimal/tokens.css";
+@import "../folio/themes/terminal/tokens.css";
+@import "../folio/themes/editorial/tokens.css";
+@import "../folio/themes/bento/tokens.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Maps --f-* theme tokens onto Tailwind utilities:
+ * bg-background, text-foreground, text-muted, text-accent, border-border,
+ * bg-card, font-heading, font-body, rounded-token, shadow-token.
+ * `inline` keeps utilities pointing at the live var, so tokens can change
+ * per-theme and per-mode without regenerating CSS.
+ */
+@theme inline {
+  --color-background: var(--f-bg);
+  --color-foreground: var(--f-fg);
+  --color-muted: var(--f-muted);
+  --color-accent: var(--f-accent);
+  --color-accent-2: var(--f-accent-2);
+  --color-accent-3: var(--f-accent-3);
+  --color-border: var(--f-border);
+  --color-card: var(--f-card);
+  --font-heading: var(--f-font-heading);
+  --font-body: var(--f-font-body);
+  --radius-token: var(--f-radius);
+  --shadow-token: var(--f-shadow);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--f-bg);
+  color: var(--f-fg);
+  font-family: var(--f-font-body);
+}
+
+/* Long-form MDX typography, driven by theme tokens. */
+.mdx-prose {
+  max-width: 42rem;
+  line-height: 1.75;
+  color: var(--f-fg);
+}
+.mdx-prose p {
+  margin-block: 1.25em;
+  color: color-mix(in oklch, var(--f-fg) 82%, var(--f-muted));
+}
+.mdx-prose h2,
+.mdx-prose h3 {
+  font-family: var(--f-font-heading);
+  letter-spacing: var(--f-tracking);
+  margin-block: 2em 0.75em;
+}
+.mdx-prose h2 {
+  font-size: 1.75rem;
+}
+.mdx-prose h3 {
+  font-size: 1.35rem;
+}
+.mdx-prose a {
+  color: var(--f-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.mdx-prose ul,
+.mdx-prose ol {
+  margin-block: 1.25em;
+  padding-inline-start: 1.5em;
+}
+.mdx-prose ul {
+  list-style: disc;
+}
+.mdx-prose ol {
+  list-style: decimal;
+}
+.mdx-prose li {
+  margin-block: 0.4em;
+  color: color-mix(in oklch, var(--f-fg) 82%, var(--f-muted));
+}
+.mdx-prose blockquote {
+  margin-block: 1.75em;
+  border-inline-start: 1px solid var(--f-accent);
+  padding-inline-start: 1.5em;
+  font-family: var(--f-font-heading);
+  font-style: italic;
+  font-size: 1.15em;
+}
+.mdx-prose code {
+  font-size: 0.9em;
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius);
+  padding: 0.1em 0.35em;
+}
+.mdx-prose pre {
+  margin-block: 1.5em;
+  overflow-x: auto;
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius);
+  padding: 1.25em;
+}
+.mdx-prose pre code {
+  border: none;
+  padding: 0;
+}
+.mdx-prose img {
+  max-width: 100%;
+  margin-block: 1.75em;
+}
+.mdx-prose hr {
+  margin-block: 3em;
+  border-color: var(--f-border);
+}
+
+/* Skills marquee — pure CSS loop, halted under reduced motion. */
+@keyframes f-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.f-marquee-track {
+  animation: f-marquee 28s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .f-marquee-track {
+    animation: none;
+  }
+  /* motion.respectReducedMotion: false — dev preview override. */
+  [data-force-motion] .f-marquee-track {
+    animation: f-marquee 28s linear infinite;
+  }
+}

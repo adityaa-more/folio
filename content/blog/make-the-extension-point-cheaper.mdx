@@ -1,0 +1,25 @@
+---
+title: "Make the extension point cheaper than the fork"
+summary: "The one architectural rule that kept a 40-site platform from becoming 40 codebases."
+date: "2026-01"
+tags: ["Architecture", "Design Systems"]
+---
+
+Every platform team eventually faces the same fork in the road — literally.
+A consumer needs something the platform doesn't do, and they can either
+extend it or fork it.
+
+People don't fork because they're undisciplined. They fork because, at the
+moment of decision, forking was cheaper:
+
+1. The extension API was undocumented, or
+2. it required a review cycle the fork didn't, or
+3. it simply didn't exist yet.
+
+So the rule: **whenever someone forks, treat it as a pricing bug in your
+extension point.** Find the step that made extending more expensive than
+copying, and delete that step.
+
+On Corelane this meant a registry where a new block was one folder plus one
+line, validated at build time. Once that landed, forks stopped — not because
+we banned them, but because they became the slower option.

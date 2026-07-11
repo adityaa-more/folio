@@ -1,0 +1,38 @@
+/*
+ * luxury-minimal — design tokens.
+ * Serif display, huge whitespace, hairline rules, no shadows, no radii.
+ * Scoped to [data-theme] so multiple theme sheets can coexist.
+ */
+
+[data-theme="luxury-minimal"] {
+  --f-bg: #faf9f7;
+  --f-fg: #211d19;
+  --f-muted: #857d72;
+  --f-accent: #96793f;
+  --f-accent-2: #55604b;
+  --f-accent-3: #b8a98e;
+  --f-border: #e8e3da;
+  --f-card: transparent;
+
+  --f-radius: 0rem;
+  --f-shadow: none;
+  --f-tracking: 0.015em;
+
+  --f-space-section: clamp(7rem, 14vw, 11rem);
+  --f-maxw: 56rem;
+
+  --f-font-heading: var(--font-luxury-heading), Georgia, "Times New Roman", serif;
+  --f-font-body: var(--font-luxury-body), system-ui, sans-serif;
+}
+
+[data-theme="luxury-minimal"].dark,
+.dark [data-theme="luxury-minimal"] {
+  --f-bg: #141210;
+  --f-fg: #ece7df;
+  --f-muted: #8f887c;
+  --f-accent: #c2a367;
+  --f-accent-2: #93a284;
+  --f-accent-3: #6e6354;
+  --f-border: #2a2620;
+  --f-card: transparent;
+}

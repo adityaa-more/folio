@@ -1,0 +1,38 @@
+---
+title: "Rebuilding Ledgerline's reporting engine"
+summary: "How an event-sourced ledger took month-end reporting from 40 minutes to under a second for two million transactions."
+date: "2026-03"
+client: "Ledgerline"
+role: "Lead Engineer"
+tags: ["PostgreSQL", "Event Sourcing", "Next.js"]
+---
+
+## The problem
+
+Ledgerline's finance customers ran month-end close against a normalized OLTP
+schema. Every report was a fan-out of joins across seven tables, and the
+biggest tenants were waiting **40 minutes** for a P&L rollup.
+
+## The approach
+
+We rebuilt the reporting path as an event-sourced ledger:
+
+- Every mutation appends an immutable ledger event.
+- A projector folds events into per-tenant reporting tables, denormalized for
+  the exact queries the dashboard runs.
+- Projections rebuild from scratch in under ten minutes, so schema changes
+  stopped being migrations and became replays.
+
+> The best part of an append-only ledger is that "what did this number look
+> like last Tuesday?" stops being an engineering ticket.
+
+## Results
+
+| Metric | Before | After |
+| --- | --- | --- |
+| P&L rollup (2M txns) | 40 min | 0.8 s |
+| Storage cost | baseline | +18% |
+| Audit questions per close | ~12 | 0 |
+
+The dashboard now streams results as projections update, and the audit team
+reads the ledger directly.

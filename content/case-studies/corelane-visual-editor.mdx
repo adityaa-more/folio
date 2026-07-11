@@ -1,0 +1,28 @@
+---
+title: "A block editor forty sites could share"
+summary: "Designing Corelane's visual editing layer so one deployment could power forty client sites without forty codebases."
+date: "2025-09"
+client: "Corelane"
+role: "Architect & Frontend Lead"
+tags: ["TypeScript", "GraphQL", "Design Systems"]
+---
+
+## Constraint first
+
+Corelane's agency ran forty client sites from one CMS deployment. Every site
+wanted "just one custom section," and every custom section became a fork.
+
+## Blocks as contracts
+
+We flipped the model: sections became typed blocks with a schema, a renderer,
+and a registry entry. Client sites compose from the registry; nothing forks.
+
+- A block's schema drives both the editor form and the runtime validation.
+- Renderers are pure — same data in, same markup out, per site theme.
+- New blocks ship behind a registry flag, so one site can pilot before all do.
+
+## What held up
+
+Eighteen months later the registry has 61 blocks, and the fork count is still
+zero. The lesson we kept: **make the extension point cheaper than the fork**,
+and people stop forking.
