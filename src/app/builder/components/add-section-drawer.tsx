@@ -1,7 +1,6 @@
 "use client";
 
-import type { ContentMap, SectionDefinition } from "@/folio/core/types";
-import { cn } from "@/lib/utils";
+import type { SectionDefinition } from "@/folio/core/types";
 
 export function AddSectionButton({ onClick }: { onClick: () => void }) {
   return (
@@ -20,12 +19,10 @@ export function AddSectionButton({ onClick }: { onClick: () => void }) {
 
 export function AddSectionDrawer({
   sections,
-  content,
   onPick,
   onClose,
 }: {
   sections: SectionDefinition[];
-  content: ContentMap;
   onPick: (id: string) => void;
   onClose: () => void;
 }) {
@@ -64,39 +61,25 @@ export function AddSectionDrawer({
               {category}
             </h3>
             <div className="flex flex-col gap-2">
-              {defs.map((def) => {
-                const hasContent = def.id in content;
-                return (
-                  <button
-                    key={def.id}
-                    type="button"
-                    disabled={!hasContent}
-                    onClick={() => onPick(def.id)}
-                    className={cn(
-                      "rounded border p-3 text-left transition-colors",
-                      hasContent
-                        ? "border-zinc-700 hover:border-emerald-400"
-                        : "cursor-not-allowed border-zinc-800 opacity-50",
-                    )}
-                  >
-                    <div className="flex items-baseline justify-between gap-3">
-                      <span className="text-sm font-medium">{def.name}</span>
-                      <span className="text-xs text-zinc-500">
-                        {Object.keys(def.variants).length} variant
-                        {Object.keys(def.variants).length > 1 ? "s" : ""}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-400">
-                      {def.description}
-                    </p>
-                    {!hasContent ? (
-                      <p className="mt-1.5 text-[0.7rem] text-amber-400">
-                        needs a &quot;{def.id}&quot; entry in src/config/content first
-                      </p>
-                    ) : null}
-                  </button>
-                );
-              })}
+              {defs.map((def) => (
+                <button
+                  key={def.id}
+                  type="button"
+                  onClick={() => onPick(def.id)}
+                  className="rounded border border-zinc-700 p-3 text-left transition-colors hover:border-emerald-400"
+                >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-sm font-medium">{def.name}</span>
+                    <span className="text-xs text-zinc-500">
+                      {Object.keys(def.variants).length} variant
+                      {Object.keys(def.variants).length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs leading-relaxed text-zinc-400">
+                    {def.description}
+                  </p>
+                </button>
+              ))}
             </div>
           </div>
         ))}

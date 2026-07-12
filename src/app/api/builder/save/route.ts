@@ -6,13 +6,24 @@ import {
   payloadToConfig,
   serializeConfig,
 } from "@/folio/builder/serialize-config";
+import {
+  DERIVED_CONTENT_KEYS,
+  serializeContentFile,
+  serializeContentIndex,
+} from "@/folio/builder/serialize-content";
+import { parseSectionContent } from "@/folio/core/define";
 import { buildRegistries } from "@/folio/core/renderer";
 import type { BuilderSavePayload } from "@/folio/builder/types";
 import type { SiteConfig } from "@/folio/core/types";
 
 const CONFIG_PATH = path.join(process.cwd(), "src", "config", "site.config.ts");
+const CONTENT_DIR = path.join(process.cwd(), "src", "config", "content");
 
-/** Dev-only: writes the builder's state back to src/config/site.config.ts. */
+/**
+ * Dev-only: writes builder state back to disk —
+ * site.config.ts + one file per edited content key + regenerated content
+ * index. Everything validates before anything is written.
+ */
 export async function POST(request: Request) {
   if (process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Not available" }, { status: 404 });
@@ -35,7 +46,13 @@ export async function POST(request: Request) {
     );
   }
 
-  // Cross-check ids against merged registries — same guarantees the renderer gives.
+  const content = payload.content ?? {};
+  const dirtyKeys = (payload.dirtyContent ?? []).filter(
+    (key) => !DERIVED_CONTENT_KEYS.has(key),
+  );
+
+  // Cross-check ids + validate all touched content — same guarantees the
+  // renderer gives at build time. Nothing is written until all checks pass.
   try {
     const { sections, themes, presets } = buildRegistries(config as SiteConfig);
     themes.get(config.theme);
@@ -47,6 +64,16 @@ export async function POST(request: Request) {
         );
       }
       if (entry.motion) presets.get(entry.motion);
+      const contentKey = entry.content ?? entry.id;
+      if (!DERIVED_CONTENT_KEYS.has(contentKey)) {
+        parseSectionContent(def.id, contentKey, def.schema, content[contentKey]);
+      }
+    }
+    for (const key of dirtyKeys) {
+      if (sections.has(key)) {
+        const def = sections.get(key);
+        parseSectionContent(def.id, key, def.schema, content[key]);
+      }
     }
   } catch (error) {
     return NextResponse.json(
@@ -56,5 +83,20 @@ export async function POST(request: Request) {
   }
 
   fs.writeFileSync(CONFIG_PATH, serializeConfig(payload), "utf8");
-  return NextResponse.json({ ok: true });
+  for (const key of dirtyKeys) {
+    fs.writeFileSync(
+      path.join(CONTENT_DIR, `${key}.ts`),
+      serializeContentFile(key, content[key]),
+      "utf8",
+    );
+  }
+  if (dirtyKeys.length > 0) {
+    fs.writeFileSync(
+      path.join(CONTENT_DIR, "index.ts"),
+      serializeContentIndex(Object.keys(content)),
+      "utf8",
+    );
+  }
+
+  return NextResponse.json({ ok: true, wroteContentFiles: dirtyKeys });
 }

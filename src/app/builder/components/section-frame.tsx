@@ -12,6 +12,7 @@ export function SectionFrame({
   onPatch,
   onMove,
   onRemove,
+  onEdit,
   error,
   children,
 }: {
@@ -22,6 +23,7 @@ export function SectionFrame({
   onPatch: (patch: Partial<BuilderSectionEntry>) => void;
   onMove: (delta: -1 | 1) => void;
   onRemove: () => void;
+  onEdit?: () => void;
   error?: string;
   children?: ReactNode;
 }) {
@@ -38,6 +40,17 @@ export function SectionFrame({
       <div className="sticky top-[76px] z-[65] flex justify-center">
         <div className="pointer-events-auto -mb-9 flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-950/95 px-3 py-1.5 text-xs text-zinc-300 shadow-lg backdrop-blur">
           <span className="font-semibold text-emerald-300">{entry.id}</span>
+
+          {onEdit ? (
+            <button
+              type="button"
+              onClick={onEdit}
+              title="Edit this section's text & data"
+              className="rounded border border-emerald-500/60 px-2 py-1 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/10"
+            >
+              ✎ edit
+            </button>
+          ) : null}
 
           {variants.length > 1 ? (
             <label className="flex items-center gap-1 text-zinc-500" title="How this section is laid out">

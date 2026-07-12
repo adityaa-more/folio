@@ -1,59 +1,13 @@
 import type { SiteConfig } from "@/folio/core/types";
 import type { BuilderSavePayload } from "./types";
 
+import { printValue, prune } from "./print";
+
 /**
- * Builder payload → src/config/site.config.ts source text.
- * Output is stable and hand-formatted (2-space indent, trailing commas,
- * keys unquoted when valid identifiers) so repeated saves produce minimal
- * git diffs.
+ * Builder payload → src/config/site.config.ts source text. Printer shared
+ * with serialize-content (see ./print.ts) so all generated files format
+ * identically.
  */
-
-const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
-
-function printKey(key: string): string {
-  return IDENTIFIER.test(key) ? key : JSON.stringify(key);
-}
-
-function printValue(value: unknown, indent: string): string {
-  if (value === null) return "null";
-  if (typeof value === "string") return JSON.stringify(value);
-  if (typeof value === "number" || typeof value === "boolean")
-    return String(value);
-  if (Array.isArray(value)) {
-    if (value.length === 0) return "[]";
-    const inner = indent + "  ";
-    const items = value.map((item) => `${inner}${printValue(item, inner)},`);
-    return `[\n${items.join("\n")}\n${indent}]`;
-  }
-  if (typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>).filter(
-      ([, v]) => v !== undefined,
-    );
-    if (entries.length === 0) return "{}";
-    const inner = indent + "  ";
-    const lines = entries.map(
-      ([k, v]) => `${inner}${printKey(k)}: ${printValue(v, inner)},`,
-    );
-    return `{\n${lines.join("\n")}\n${indent}}`;
-  }
-  throw new Error(`[folio] Cannot serialize value of type ${typeof value}`);
-}
-
-/** Drops empty objects / defaults so the emitted config stays minimal. */
-function prune(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(prune);
-  if (value && typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>)
-      .map(([k, v]) => [k, prune(v)] as const)
-      .filter(
-        ([, v]) =>
-          v !== undefined &&
-          !(v && typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 0),
-      );
-    return Object.fromEntries(entries);
-  }
-  return value;
-}
 
 /** Assembles the full SiteConfig object the payload represents. */
 export function payloadToConfig(payload: BuilderSavePayload): SiteConfig {

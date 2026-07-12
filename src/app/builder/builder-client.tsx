@@ -14,10 +14,15 @@ import type {
   BuilderSectionEntry,
   BuilderState,
 } from "@/folio/builder/types";
+import { buildSkeleton, type ZodLike } from "@/folio/builder/skeleton";
 import { cn } from "@/lib/utils";
 import { TopBar } from "./components/top-bar";
 import { SectionFrame } from "./components/section-frame";
 import { AddSectionButton, AddSectionDrawer } from "./components/add-section-drawer";
+import { ContentPanel } from "./components/content-form/content-panel";
+
+/** Content keys derived at build time — form shows a read-only notice. */
+const DERIVED_KEYS = new Set(["case-studies"]);
 
 export function BuilderClient({
   initialState,
@@ -29,6 +34,9 @@ export function BuilderClient({
   content: ContentMap;
 }) {
   const [state, setState] = useState<BuilderState>(initialState);
+  const [contentMap, setContentMap] = useState<ContentMap>(content);
+  const [dirtyContent, setDirtyContent] = useState<Set<string>>(new Set());
+  const [editingKey, setEditingKey] = useState<string | null>(null);
   const [replayNonce, setReplayNonce] = useState(0);
   const [drawerAt, setDrawerAt] = useState<number | null>(null);
   const [status, setStatus] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -80,12 +88,26 @@ export function BuilderClient({
     }));
 
   const insertSection = (index: number, id: string) => {
+    // Sections without content get a schema-default skeleton so the preview
+    // and the ✎ form open non-empty.
+    if (contentMap[id] === undefined && registries.sections.has(id)) {
+      const def = registries.sections.get(id);
+      const skeleton = buildSkeleton(def.schema as unknown as ZodLike, id);
+      setContentMap((prev) => ({ ...prev, [id]: skeleton }));
+      setDirtyContent((prev) => new Set(prev).add(id));
+    }
     setState((prev) => {
       const sections = [...prev.sections];
       sections.splice(index, 0, { id, enabled: true });
       return { ...prev, sections };
     });
     setDrawerAt(null);
+  };
+
+  const applyContent = (key: string, parsed: unknown) => {
+    setContentMap((prev) => ({ ...prev, [key]: parsed }));
+    setDirtyContent((prev) => new Set(prev).add(key));
+    setEditingKey(null);
   };
 
   const save = async () => {
@@ -109,6 +131,8 @@ export function BuilderClient({
             modules: passthrough.modules,
             respectReducedMotion: passthrough.respectReducedMotion,
           },
+          content: contentMap,
+          dirtyContent: [...dirtyContent],
         }),
       });
       const body = await response.json();
@@ -139,7 +163,11 @@ export function BuilderClient({
         onChange={setState}
         themes={registries.themes.all()}
         onSave={save}
-        onReset={() => setState(initialState)}
+        onReset={() => {
+          setState(initialState);
+          setContentMap(content);
+          setDirtyContent(new Set());
+        }}
         onReplayAll={() => setReplayNonce((nonce) => nonce + 1)}
         saving={saving}
         status={status}
@@ -195,7 +223,7 @@ export function BuilderClient({
               ? registries.presets.get(presetId)
               : registries.presets.get("fade-up");
 
-            const raw = content[entry.id];
+            const raw = contentMap[entry.id];
             const parsed = raw !== undefined ? def.schema.safeParse(raw) : null;
 
             return (
@@ -208,11 +236,12 @@ export function BuilderClient({
                   onPatch={(patch) => patchSection(index, patch)}
                   onMove={(delta) => moveSection(index, delta)}
                   onRemove={() => removeSection(index)}
+                  onEdit={() => setEditingKey(entry.id)}
                   error={
                     raw === undefined
-                      ? `No content for "${entry.id}" — add an entry in src/config/content`
+                      ? `No content for "${entry.id}" — click ✎ edit to fill it in`
                       : parsed && !parsed.success
-                        ? `Content invalid for "${entry.id}"`
+                        ? `Content invalid for "${entry.id}" — click ✎ edit to fix`
                         : undefined
                   }
                 >
@@ -243,9 +272,28 @@ export function BuilderClient({
       {drawerAt !== null ? (
         <AddSectionDrawer
           sections={registries.sections.all()}
-          content={content}
           onPick={(id) => insertSection(drawerAt, id)}
           onClose={() => setDrawerAt(null)}
+        />
+      ) : null}
+
+      {editingKey !== null && registries.sections.has(editingKey) ? (
+        <ContentPanel
+          def={registries.sections.get(editingKey)}
+          initialValue={
+            contentMap[editingKey] ??
+            buildSkeleton(
+              registries.sections.get(editingKey).schema as unknown as ZodLike,
+              editingKey,
+            )
+          }
+          readOnlyReason={
+            DERIVED_KEYS.has(editingKey)
+              ? "This section's cards come from the MDX files in content/case-studies — add or edit .mdx files there and the cards update automatically."
+              : undefined
+          }
+          onApply={(parsed) => applyContent(editingKey, parsed)}
+          onClose={() => setEditingKey(null)}
         />
       ) : null}
     </div>

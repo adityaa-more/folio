@@ -35,4 +35,8 @@ export interface BuilderPassthrough {
 export interface BuilderSavePayload {
   state: BuilderState;
   passthrough: Omit<BuilderPassthrough, "plugins">;
+  /** Full content map (all keys) — index.ts is regenerated from these keys. */
+  content: Record<string, unknown>;
+  /** Keys edited this session — only these get their file rewritten. */
+  dirtyContent: string[];
 }
