@@ -1,20 +1,21 @@
 import type { ContentMap } from "@/folio/core/types";
 import type { CaseStudiesContent } from "@/folio/sections/case-studies/schema";
 import { getCaseStudies } from "@/folio/content/mdx";
-import { hero } from "./hero";
 import { about } from "./about";
-import { projects } from "./projects";
-import { experience } from "./experience";
-import { skills } from "./skills";
-import { metrics } from "./metrics";
-import { testimonials } from "./testimonials";
-import { gallery } from "./gallery";
 import { bento } from "./bento";
-import { faq } from "./faq";
-import { contact } from "./contact";
-import { githubStats } from "./github-stats";
-import { techStack } from "./tech-stack";
 import { codeShowcase } from "./code-showcase";
+import { contact } from "./contact";
+import { experience } from "./experience";
+import { faq } from "./faq";
+import { gallery } from "./gallery";
+import { githubStats } from "./github-stats";
+import { hero } from "./hero";
+import { metrics } from "./metrics";
+import { projects } from "./projects";
+import { skills } from "./skills";
+import { techStack } from "./tech-stack";
+import { testimonials } from "./testimonials";
+import { visualCaseStudy } from "./visual-case-study";
 
 /** Case-study cards derive from the MDX files in /content/case-studies. */
 const caseStudies: CaseStudiesContent = {
@@ -37,20 +38,20 @@ const caseStudies: CaseStudiesContent = {
  * against its section's schema at build time.
  */
 export const content: ContentMap = {
-  hero,
   about,
-  projects,
-  "case-studies": caseStudies,
-  experience,
-  skills,
-  metrics,
-  testimonials,
-  gallery,
   bento,
-  faq,
-  contact,
-  // developer module sections
-  "github-stats": githubStats,
-  "tech-stack": techStack,
   "code-showcase": codeShowcase,
+  contact,
+  experience,
+  faq,
+  gallery,
+  "github-stats": githubStats,
+  hero,
+  metrics,
+  projects,
+  skills,
+  "tech-stack": techStack,
+  testimonials,
+  "visual-case-study": visualCaseStudy,
+  "case-studies": caseStudies,
 };

@@ -89,6 +89,7 @@ Spec'd for contribution (see `src/folio/themes/_stubs/`): cinematic, cyber-grid,
 
 ```bash
 pnpm new:section awards        # scaffolds a section block, pre-wired
+pnpm validate                  # registry consistency check (schemas, variants, wiring)
 ```
 
 - Sections: [docs/sections.md](docs/sections.md)

@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "validate": "node scripts/validate-registries.mjs",
+    "ci": "pnpm validate && pnpm typecheck && pnpm lint && pnpm build",
     "new:section": "node scripts/new-section.mjs"
   },
   "dependencies": {

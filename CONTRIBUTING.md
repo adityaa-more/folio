@@ -12,9 +12,10 @@ pnpm dev
 #   /builder   — the end-user experience you're contributing to
 ```
 
-Quality gates (all must pass — CI runs them):
+Quality gates (all must pass — CI runs them, or run everything at once with `pnpm ci`):
 
 ```bash
+pnpm validate    # registry consistency: schemas, defaultVariant, reducedMotion, wiring
 pnpm typecheck && pnpm lint && pnpm build
 ```
 
