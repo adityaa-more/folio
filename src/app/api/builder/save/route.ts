@@ -26,7 +26,15 @@ const CONTENT_DIR = path.join(process.cwd(), "src", "config", "content");
  */
 export async function POST(request: Request) {
   if (process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "Not available" }, { status: 404 });
+    // Stays off even in FOLIO_DEMO deployments — saving writes to the repo's
+    // source files, which only makes sense on a local checkout.
+    return NextResponse.json(
+      {
+        error:
+          "Saving is disabled on this demo — clone the repo and run `pnpm dev` to build your own.",
+      },
+      { status: 403 },
+    );
   }
 
   let payload: BuilderSavePayload;

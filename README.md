@@ -126,6 +126,8 @@ vercel --prod       # publish — you get a *.vercel.app URL
 
 The deploy folder is the **repo root** — single Next.js app, nothing to configure. Re-run `vercel --prod` to publish future edits. `/builder` and `/showcase` auto-disable in the production build.
 
+**Demo deployments:** set the env var `FOLIO_DEMO=true` (Vercel → Settings → Environment Variables) to keep `/builder` and `/showcase` visible in production — useful when the deployment *is* the demo. Saving from the builder stays disabled either way; it writes source files, which needs a local checkout.
+
 > Hosting anywhere needs one account with that host (Vercel/Netlify/etc.) — that's unavoidable. But no version-control account is required.
 
 ## Accessibility & performance

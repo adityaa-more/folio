@@ -4,6 +4,7 @@ import siteConfig from "@/config/site.config";
 import { content } from "@/config/content";
 import { buildRegistries, resolvePortfolio } from "@/folio/core/renderer";
 import { themeRegistry } from "@/folio/themes/registry";
+import { devToolsEnabled } from "@/lib/demo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,7 +22,7 @@ export default async function ShowcasePage({
     view?: string;
   }>;
 }) {
-  if (process.env.NODE_ENV === "production") notFound();
+  if (!devToolsEnabled) notFound();
 
   const params = await searchParams;
   const themeId = params.theme ?? siteConfig.theme;

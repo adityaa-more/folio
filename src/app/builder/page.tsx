@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import siteConfig from "@/config/site.config";
 import { content } from "@/config/content";
 import type { BuilderPassthrough, BuilderState } from "@/folio/builder/types";
+import { devToolsEnabled } from "@/lib/demo";
 import { BuilderClient } from "./builder-client";
 
 export const metadata = { title: "Folio Builder" };
@@ -12,7 +13,7 @@ export const metadata = { title: "Folio Builder" };
  * client UI as serializable props.
  */
 export default function BuilderPage() {
-  if (process.env.NODE_ENV === "production") notFound();
+  if (!devToolsEnabled) notFound();
 
   const initialState: BuilderState = {
     theme: siteConfig.theme,
